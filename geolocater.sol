@@ -6,9 +6,7 @@ automatic payment processing for use of the service.
 Use: Send a geolocation through FindBoundary() and it is processed to determine if a point lies 
 within a reference boundary. Useful for tracking sales zones, delivery of goods, etc.
 
-The user may select the desired geolocator when calling FindBoundary.
-
-Current options include: 
+The user may select the desired geolocator when calling FindBoundary. Current options include: 
 	* ArcGIS, 
 	* Google,
 	* OpenCage 
@@ -24,7 +22,7 @@ contract GeoLocate {
 	address admin; 
 	// contract balance .. only set by admin 
 	uint balance;
-	// cost of using this service
+	// eth cost of using this service
 	uint public cost = 1 ; // set ether amount
 	
 
@@ -45,10 +43,12 @@ contract GeoLocate {
 
 	function FindBoundary(uint price, string service, uint location, uint boundary) public returns (string, uint) { // primary function 
 		
-		if (price < cost) return; // do nothing if price not paid
+		if (price != cost) return; // do nothing if price not paid
 
 		// update balance status
 		// fire balance transfer
+
+		// use msg.value to call variables passed into function ?
 
 		// select a service with instantiation
 		// pass JSON to selected geolocator API
