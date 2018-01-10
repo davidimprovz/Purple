@@ -1,4 +1,5 @@
 /* 
+©2018 David Williams. All Rights Reserved. 
 
 Geolocate: An exercise in managing tranactions based on geographical boundaries with 
 automatic payment processing for use of the service.
@@ -15,15 +16,14 @@ The user may select the desired geolocator when calling FindBoundary. Current op
 
 pragma solidity ^0.4.0;
 
+contract GeoLocate { // to find locations 
 
-contract GeoLocate {
+	
+	address admin; // contact admin 
+	uint balance; // contract balance .. only set by admin 
+	uint public cost = 0 ; // eth cost of using this service initialized to 0
 
-	// contact admin 
-	address admin; 
-	// contract balance .. only set by admin 
-	uint balance;
-	// eth cost of using this service
-	uint public cost = 1 ; // set ether amount
+
 	
 
 	// notify if contract balance should be moved to an account
@@ -41,9 +41,10 @@ contract GeoLocate {
 	}
 
 
-	function FindBoundary(uint price, string service, uint location, uint boundary) public returns (string, uint) { // primary function 
+	function CrossBoundary(uint payment, string service, uint location) public returns (string, uint) { // primary function 
+		// receives a price for crossing the threshold, a service name, and a GPS-fixed location
 		
-		if (price != cost) return; // do nothing if price not paid
+		require(payment != cost); // do nothing if price not paid
 
 		// update balance status
 		// fire balance transfer
@@ -51,6 +52,7 @@ contract GeoLocate {
 		// use msg.value to call variables passed into function ?
 
 		// select a service with instantiation
+		// pass GPS location to service that checks for and retrieves boundary polygons (e.g., uint [])
 		// pass JSON to selected geolocator API
 		// get geolocation result 
 		// send json geolocation result to GIS API to determine inclusion / exclusion and proximity / distance
