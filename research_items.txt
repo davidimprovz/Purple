@@ -14,3 +14,8 @@ Unclaimed funds handling
 
 	
 Condition / outcome mapping for potential problems
+
+
+Solidity structures
+	Transform string(code) into code?
+	mapping (address => function()) ??
