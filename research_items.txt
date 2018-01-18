@@ -1,1 +1,16 @@
 FOAM - https://slack.foam.space/
+
+
+Automated Policies
+
+
+Interest Handling 
+	// what happens to the potential interest gained on these funds while held by the contract?
+
+
+Unclaimed funds handling 
+	// forfiture policies writing
+	// forfiture funds handling
+
+	
+Condition / outcome mapping for potential problems

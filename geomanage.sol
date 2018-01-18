@@ -18,6 +18,21 @@ The user may select the desired geolocator when calling FindBoundary. Current op
 
 */
 
+
+// msg.sender.send
+// _argument with same name as class variable function(){ argument = _argument; }
+// keyword now
+// .transfer()
+// payable keyword
+// fire events
+// use of flags to close a contract's operation 
+// modifier keyword
+// array[address].push()
+// msg.value money container
+// keccak256(value, fake, secret), ethereum's standard hashing encryption
+// internal keyword for functions
+
+
 pragma solidity ^0.4.0;
 
 contract GeoManage {
@@ -45,16 +60,22 @@ contract GeoManage {
 	event IsInside(); // notify when inclusive boundary condition met...should include UTC time, geolocation, and address
 	event PriceChange(); // notify when price changed
 
-	function GeoManage(uint price, string title, uint[][] bounds) public { // constructor sets boundary admin for this contract
+	function geoManage(
+		uint price, 
+		string title, 
+		uint[][] bounds
+	) 
+		public 
+	  	payable // money can be sent into contract via this constructor 
+	{ // constructor sets boundary admin for this contract
 		admin = msg.sender;
 		cost = price;
 		// need for loop to push new boundary structs onto the boundaries array.
 			// push
-
 	}
 
 
-	function CrossBoundary(uint payment, string service, uint location) public returns (string, uint) { // primary function 
+	function crossBoundary(uint payment, string service, uint location) public returns (string, uint) { // primary function 
 		// receives a price for crossing the threshold, a service name, and a GPS-fixed location
 		
 		// storage within functions for global shorthand references
@@ -81,14 +102,14 @@ contract GeoManage {
 	// set the cost of calling the contract
 	function setCost(uint price) public {
 		// storage within functions for global shorthand references
-		if (msg.sender != admin) return;
+		require(msg.sender != admin);
 		cost = price;
 	}
 
 
 	function sendBalance(uint money) returns(address, uint) {
 		// storage within functions for global shorthand references
-		if (msg.sender != admin) return; // unnecessary but check in case it's possible to access non-public methods
+		require(msg.sender != admin); // unnecessary but check in case it's possible to access non-public methods
 		// process balance transfer
 		return 1;
 	}

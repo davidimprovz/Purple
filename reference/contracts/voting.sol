@@ -18,7 +18,7 @@ struct Boardmember {
 
 with a mapping (address => Boardmember) public boardmembers.
 
-and write the functions to manage other aspects of the contract.
+and write the functions to manage those aspects of the contract.
 */
 
 pragma solidity ^0.4.16;
@@ -64,6 +64,7 @@ contract Ballot {
         }
     }
 
+    // might be useful to modify function, allowing arrays of voters to be passed and processed with only 1 transaction instead of multiple calls 
     function giveRightToVote(address voter) public { // Give someone the right to vote
         // If `require` is `false`, it terminates and reverts all changes to the state and to Ether balances.
         // It's good idea to use require() so functions aren't called incorrectly. 
@@ -74,7 +75,7 @@ contract Ballot {
     }
 
     function delegate(address to) public { // Anyone can delegate their vote to the address / person of their choosing.
-        Voter storage sender = voters[msg.sender]; // make a sender variable for reference in this function
+        Voter storage sender = voters[msg.sender]; // make a sender variable that is stored in contract "storage" for later reference
         require(!sender.voted); // make sure the voter hasn't voted yet
         require(to != msg.sender); // a voter cannot delegate to themselves. duh.
 
@@ -102,6 +103,7 @@ contract Ballot {
         }
     }
 
+    // might be useful to add argument of vote arrays that can be processed in single transaction 
     function vote(uint proposal) public { // Give your vote (+ votes delegated to you) to a proposal `proposals[proposal].name`.
         Voter storage sender = voters[msg.sender]; // make a reference to the voter
         require(!sender.voted); // make sure the voter has not voted
@@ -118,7 +120,7 @@ contract Ballot {
         uint winningVoteCount = 0; // start a counter
         for (uint p = 0; p < proposals.length; p++) { // you're going to get the counts of all proposals recursively
             if (proposals[p].voteCount > winningVoteCount) { // see if the vote count for each proposal is more than the winning count
-                winningVoteCount = proposals[p].voteCount; // and assign that vote count as the highest to compare recursively to all other proposals
+                winningVoteCount = proposals[p].voteCount; // and assign that vote count as the highest to compare recursively with remaining proposals
                 winningProposal = p; // after last proposal is counted, the winning proposal is an index to proposals. Use accessor to return proposals[p], or call winnerName()
             }
         }

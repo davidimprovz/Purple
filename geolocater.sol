@@ -14,6 +14,20 @@ The user may select the desired geolocator when calling FindBoundary. Current op
 
 */
 
+// msg.sender.send
+// _argument with same name as class variable function(){ argument = _argument; }
+// keyword now
+// .transfer()
+// payable keyword
+// fire events
+// use of flags to close a contract's operation 
+// modifier keyword
+// array[address].push()
+// msg.value money container
+// keccak256(value, fake, secret), ethereum's standard hashing encryption
+// internal keyword for functions
+
+
 pragma solidity ^0.4.0;
 
 contract GeoLocate { // to find locations 
@@ -35,13 +49,13 @@ contract GeoLocate { // to find locations
 
 
 	// constructor sets contract admin
-	function GeoLocateBoundary(uint price) public {
+	function geoLocateBoundary(uint price) public {
 		admin = msg.sender;
 		cost = price;
 	}
 
 
-	function CrossBoundary(uint payment, string service, uint location) public returns (string, uint) { // primary function 
+	function crossBoundary(uint payment, string service, uint location) public returns (string, uint) { // primary function 
 		// receives a price for crossing the threshold, a service name, and a GPS-fixed location
 		
 		require(payment != cost); // do nothing if price not paid
@@ -65,13 +79,13 @@ contract GeoLocate { // to find locations
 
 	// set the cost of calling the contract
 	function setCost(uint price) public {
-		if (msg.sender != admin) return;
+		require(msg.sender != admin);
 		cost = price;
 	}
 
 
 	function sendBalance(uint money) returns(address, uint) {
-		if (msg.sender != admin) return; // unnecessary but check in case it's possible to access non-public methods
+		require(msg.sender != admin); // unnecessary but check in case it's possible to access non-public methods
 		// process balance transfer
 		return 1;
 	}
