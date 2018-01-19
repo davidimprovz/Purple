@@ -1,11 +1,11 @@
 /* 
 
-©2018 David Williams. All Rights Reserved. 
+©2018 David Williams. All Rights Reserved.
 
-Geomanage: A contract governing a specific geographical area (i.e., polygon boundary).
+Geomanage: A DEMO contract governing a specific geographical area (i.e., polygon boundary).
 
-An exercise in managing tranactions based on geographical boundaries with automatic 
-payment processing for use of the service.
+This is a work-in-progress exercise in managing tranactions based on geographical boundaries with automatic 
+payment processing for use of the contract.
 
 Use: Any time a ioT device georefrences the boundary specified within each contract instantiation, 
 a search will recall contract terms and the costs governing that parcel. The transaction required 
