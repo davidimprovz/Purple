@@ -18,12 +18,16 @@ The user may select the desired geolocator when calling FindBoundary. Current op
 
 */
 
+// THINGS TO IMPLEMENT 
 
 // keyword now
 // use of flags to close a contract's operation 
 // msg.value money container
 // keccak256(value, fake, secret), ethereum's standard hashing encryption
-
+// this.balance
+// withdrwaw pattern
+// Name enum {}...Name name
+// modifier condition(bool _condition)
 
 
 pragma solidity ^0.4.0;
