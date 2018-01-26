@@ -24,10 +24,20 @@ The user may select the desired geolocator when calling FindBoundary. Current op
 // use of flags to close a contract's operation 
 // msg.value money container
 // keccak256(value, fake, secret), ethereum's standard hashing encryption
-// this.balance
 // withdrwaw pattern
 // Name enum {}...Name name
-// modifier condition(bool _condition)
+
+
+// USEFUL SNIPPETS
+
+/*
+modifier noReentrancy() {
+        require(!locked);
+        locked = true;
+        _;
+        locked = false;
+    }
+*/
 
 
 pragma solidity ^0.4.0;
@@ -45,7 +55,7 @@ contract GeoManage {
 	*/
 
 	address admin; // contract admin
-	uint balance; // contract balance set by admin
+	uint funds; // funds available in the contract
 	uint public cost; // eth cost of using this service...currently paid on a per-boundary basis
 	uint public gas_price; // gas price for contract
 
@@ -67,7 +77,7 @@ contract GeoManage {
 
 	// MODIFIERS
 	modifier onlyAdmin(address _address) { require(_address == admin); _; }
-
+	modifier conditional(bool _condition)
 
 	// FUNCTIONS
 
@@ -170,13 +180,13 @@ contract GeoManage {
 		if(msg.sender == _address){ destination = msg.sender; } 
 		else{ destination = _address; }
 
-		uint money = balance; // hold money 
-		balance = 0; // set balance to 0
+		uint money = funds; 
+		funds = 0; // set balance to 0
 
 		// notify admin of balance transfer just in case
 
-		if(!owner.transfer(money)){ // make sure money gets transferred or revert the transaction 
-			balance = money;
+		if(!owner.send(this.balance)){ // make sure money gets transferred or revert the transaction 
+			funds = money;
 			return false;
 		}
 
