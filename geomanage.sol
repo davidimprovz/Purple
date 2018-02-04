@@ -66,7 +66,7 @@ contract GeoManage {
 	}
 
 	boundary[] public boundaries; // an array of boundary structs
-	mapping (address => boundaries); // a collection of boundaries is found using an address
+	mapping (address => boundary[]) geomap; // a collection of boundaries is found using an address
 
 
 	// EVENTS 
@@ -77,21 +77,18 @@ contract GeoManage {
 
 	// MODIFIERS
 	modifier onlyAdmin(address _address) { require(_address == admin); _; }
-	modifier conditional(bool _condition)
+	modifier conditional(bool _condition) { require(_condition == true); _; } 
 
 	// FUNCTIONS
 
 	/// geoManage() constructor sets the administrator for this instance of 
 	/// geo management.
-	function geoManage(address _address) public returns (bool)
+	function geoManage(address _address, uint _base_price) public returns (bool)
 	{
-		if(!admin && !cost){
-			admin = msg.sender;
-			cost = price;
-			return true;
-		} 
-
-		else { return false; }
+		require(admin != _address);	
+		admin = msg.sender;
+		cost = _base_price; // contract's base price, upon which each of the boundaries will be based (assumes some pricing model)
+		return true;
 	}
 
 
