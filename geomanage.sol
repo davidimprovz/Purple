@@ -38,76 +38,115 @@ modifier noReentrancy() {
         locked = false;
     }
 */
-
-
-pragma solidity ^0.4.0;
+pragma solidity ^0.4.6;
 
 contract GeoManage {
-	
-	// VARIABLES
 
 	/* 
 	Variables instantiated include:
-	• admin - contract admin with special privileges
-	• balance - funds the contract owns
-	• cost - price to use the boundary
-	• boundary / boundaries - specific boundaries and a container for all of them.
+	* admin - contract admin with special privileges
+	* funds - eth balance of the contract
+	* gas_price - base gas price for using with this contract
+	* cost - base price for using this contract
+	
 	*/
 
 	address admin; // contract admin
 	uint funds; // funds available in the contract
-	uint public cost; // eth cost of using this service...currently paid on a per-boundary basis
+	uint public cost; // eth cost of using this service..paid per-boundary basis
 	uint public gas_price; // gas price for contract
 
-	struct boundary { // container for each boundary
-		string name; // arbitrary name of boundary
-		uint[][] geospatial_points; // a 1x2 container of lat/long points that form a boundary polygon (dynamically allocated).
-		bool in_service; // flag for the boundary's pay-for / in-use status. 
+	struct Boundary { // container for each boundary
+	    address owner;
+		string title; // arbitrary name of boundary
+		uint[] lat_coords; // dynamic array of lat points
+		uint[] lon_coords; // dynamic array of lat points
+		uint price;
+		bool in_service; // flag for the boundary's pay-for / in-use status.
 	}
 
-	boundary[] public boundaries; // an array of boundary structs
-	mapping (address => boundary[]) geomap; // a collection of boundaries is found using an address
-
+    mapping (address => Boundary) boundaries; // map boundaries to an address
+    Boundary[] public geomaps; // dynamic array of all tracked boundaries
+    
+    // to do: create container to hold all geomaps referenced by a single address
 
 	// EVENTS 
-	event BalanceUpdate(); // notify if contract balance should be emptied ... 
+	event BalanceUpdate(); // notify if contract balance should be emptied
 	event IsInside(); // notify when inclusive boundary condition met...should include UTC time, geolocation, and address
-	event PriceChange(); // notify when price changed
+	event PriceChange(); // notify when boundary price changed … include boundary name, price, and date/time for change to take effect
 
 
 	// MODIFIERS
 	modifier onlyAdmin(address _address) { require(_address == admin); _; }
-	modifier conditional(bool _condition) { require(_condition == true); _; } 
+	modifier conditional(bool _condition) { require(_condition == true); _; }
 
 	// FUNCTIONS
 
 	/// geoManage() constructor sets the administrator for this instance of 
 	/// geo management.
-	function geoManage(address _address, uint _base_price) public returns (bool)
+	function geoManage(uint _cost, uint _gas_price) public returns (bool)
 	{
-		require(admin != _address);	
+		require(admin != msg.sender);	
 		admin = msg.sender;
-		cost = _base_price; // contract's base price, upon which each of the boundaries will be based (assumes some pricing model)
+		cost = _cost; // contract's base price…assumes some pricing model
+		gas_price = _gas_price;
 		return true;
 	}
 
-
-	/// addBoundary() takes a price, title, and geoboundaries to manage.
+	/// addBoundary() takes a price, title, and lat/lon points, and
+	/// operational status of proposed boundary.
 	/// Will return true when boundary added. To poll your boundaries, use 
 	/// viewBoundaries().
-	function addBoundary(uint _payment, struct _boundary) 
+	function addBoundary(
+	    string _title, // arbitray title for reference
+	    uint _price, // the price in wei associated w/ this boundary
+	    uint[] _lat_coords, // boundary lat / lon coordinates
+	    uint[] _lon_coords,
+	    bool _status // operational status…i.e., will customer be charged or not
+	)
+	    // to do: make payable
 		public 
-		payable // money can be sent into contract via this constructor 
-		returns (bool)
+		returns (bool) 
 	{
-		// pay first
-		// 
-
-		boundaries[msg.sender].push(_boundary);
-
+	    // to do: temp holding bin for funds
+	    
+	    require(_lat_coords.length == _lon_coords.length); // check arrays are same length
+	    // to do: add a func to check boundary is valid geo boundary.
+	    
+        Boundary storage bounds;
+        bounds.owner = msg.sender; // sender needs privileges to add boundary
+        bounds.title = _title;
+        bounds.lat_coords = _lat_coords; 
+        bounds.lon_coords = _lon_coords;
+        bounds.price = _price;
+        bounds.in_service = _status;
+        
+        // add the boundary to the boundaries array
+		boundaries[msg.sender] = bounds;
+		
+		// to do: enable multiple boundaries per each address
+		
+        // push the boundary onto the stack of all tracked boundaries 
+        geomaps.push(bounds);
+        
+        //to do: fire a boundary added event
+        
+        //to do: add value to contract
+        
+        return true;
 	}
+	
+	///set the payable status of a boundary
+	function setBoundaryStatus(string _title) public returns (bool) {
+	    //to do: find boundary by indexing the _title
+	    return true;
+	} 
+	// conditional(msg.value >= cost) for crossing the boundary
 
 
+
+
+// below not tested
 
 	/// viewBoundaries() returns a list of your boundary titles.  
 	function viewBoundaries(address _whois) public returns (string[]){
@@ -189,5 +228,4 @@ contract GeoManage {
 
 		return true;
 	} 
-
 }
