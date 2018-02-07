@@ -1,25 +1,21 @@
-/* 
+pragma solidity ^0.4.6;
 
-©2018 David Williams. All Rights Reserved.
+/* ©2018 David Williams. All Rights Reserved.
 
-Geomanage: A DEMO contract governing a specific geographical area (i.e., polygon boundary).
+Geomanage: A DEMO contract governing a specific geographical area 
+(i.e., polygon boundary).
 
-This is a work-in-progress exercise in managing tranactions based on geographical boundaries with automatic 
-payment processing for use of the contract.
+This is a work-in-progress exercise in managing tranactions based 
+on geographical boundaries with automatic payment processing for 
+use of the contract.
 
-Use: Any time a ioT device georefrences the boundary specified within each contract instantiation, 
-a search will recall contract terms and the costs governing that parcel. The transaction required 
-for operating within the boundary will be paid automatically once contract conditions are met.
-
-The user may select the desired geolocator when calling FindBoundary. Current options include: 
-	* ArcGIS, 
-	* Google,
-	* OpenCage 
-
+Use: Any time an ioT device georefrences a boundary, a search will 
+recall contract terms and the costs governing that parcel. The 
+transaction required for operating within the boundary will be paid 
+automatically once contract conditions are met and verified.
 */
 
 // THINGS TO IMPLEMENT 
-
 // keyword now
 // use of flags to close a contract's operation 
 // msg.value money container
@@ -28,32 +24,19 @@ The user may select the desired geolocator when calling FindBoundary. Current op
 // Name enum {}...Name name
 
 
-// USEFUL SNIPPETS
-
-/*
-modifier noReentrancy() {
-        require(!locked);
-        locked = true;
-        _;
-        locked = false;
-    }
-*/
-pragma solidity ^0.4.6;
-
 contract GeoManage {
 
 	/* 
-	Variables instantiated include:
-	* admin - contract admin with special privileges
-	* funds - eth balance of the contract
-	* gas_price - base gas price for using with this contract
-	* cost - base price for using this contract
-	
+	Variables
+		* admin - contract admin with special privileges
+		* funds - eth balance of the contract
+		* gas_price - base gas price for using this contract
+		* cost - base price for using this contract
 	*/
 
 	address admin; // contract admin
-	uint funds; // funds available in the contract
-	uint public cost; // eth cost of using this service..paid per-boundary basis
+	uint funds; // funds held by contract
+	uint public cost; // eth cost of using this contract..paid on per-boundary basis
 	uint public gas_price; // gas price for contract
 
 	struct Boundary { // container for each boundary
@@ -61,20 +44,22 @@ contract GeoManage {
 		string title; // arbitrary name of boundary
 		uint[] lat_coords; // dynamic array of lat points
 		uint[] lon_coords; // dynamic array of lat points
-		uint price;
-		bool in_service; // flag for the boundary's pay-for / in-use status.
+		uint price; // price for crossing boundary
+		bool in_service; // flag for the boundary's in-use (i.e., must be paid) status.
 	}
 
     mapping (address => Boundary) boundaries; // map boundaries to an address
     Boundary[] public geomaps; // dynamic array of all tracked boundaries
     
-    // to do: create container to hold all geomaps referenced by a single address
+    // to do: create container to hold all geomaps indexed by address
 
 	// EVENTS 
 	event BalanceUpdate(); // notify if contract balance should be emptied
-	event IsInside(); // notify when inclusive boundary condition met...should include UTC time, geolocation, and address
-	event PriceChange(); // notify when boundary price changed … include boundary name, price, and date/time for change to take effect
-
+	event IsInside(/*should include UTC time, geolocation, and address*/); // notify when inclusive boundary condition met
+	event PriceChange(/*boundary name, price, and date/time for change*/); // notify when boundary price changed
+	event BoudnaryCrossing(/* title, time, cost */); // notify when boundary is crossed
+	event BoundaryAdded(/* struct Boundary */); // notify when boundary added 
+	event BoundaryInvalid(/* title, owner */) // notify when boundary found invalid
 
 	// MODIFIERS
 	modifier onlyAdmin(address _address) { require(_address == admin); _; }
@@ -82,8 +67,10 @@ contract GeoManage {
 
 	// FUNCTIONS
 
-	/// geoManage() constructor sets the administrator for this instance of 
-	/// geo management.
+	/// geoManage() constructor sets the administrator for 
+	/// this contract instance. 
+	/// To initialize, include the base cost and gas price 
+	/// (in wei) of using the as well as the base gas price (in wei). 
 	function geoManage(uint _cost, uint _gas_price) public returns (bool)
 	{
 		require(admin != msg.sender);	
@@ -93,8 +80,8 @@ contract GeoManage {
 		return true;
 	}
 
-	/// addBoundary() takes a price, title, and lat/lon points, and
-	/// operational status of proposed boundary.
+	/// addBoundary() takes a price, title, lat/lon points, and
+	/// operational status of the proposed boundary.
 	/// Will return true when boundary added. To poll your boundaries, use 
 	/// viewBoundaries().
 	function addBoundary(
@@ -133,6 +120,10 @@ contract GeoManage {
         
         //to do: add value to contract
         
+        // to do: if check to make sure boundary is legit, e.g., 
+        // if (isLegit(boundary) == true) { return true; }
+        // else { return false; }
+
         return true;
 	}
 	
@@ -141,10 +132,6 @@ contract GeoManage {
 	    //to do: find boundary by indexing the _title
 	    return true;
 	} 
-	// conditional(msg.value >= cost) for crossing the boundary
-
-
-
 
 // below not tested
 
@@ -164,6 +151,7 @@ contract GeoManage {
 		string service, 
 		uint location
 	) 
+		// conditional(msg.value >= cost) for crossing the boundary
 		public 
 		returns (string, uint) 
 	{ 
@@ -228,4 +216,14 @@ contract GeoManage {
 
 		return true;
 	} 
+
+	// USEFUL SNIPPETS
+/*
+modifier noReentrancy() {
+        require(!locked);
+        locked = true;
+        _;
+        locked = false;
+    }
+*/
 }
